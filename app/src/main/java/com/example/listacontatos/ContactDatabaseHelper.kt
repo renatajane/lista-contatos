@@ -33,7 +33,7 @@ class ContactDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
 
     // Métodos para CRUD
 
-    // Cria um contato novo
+    // Cria um contato novo - POST
     fun insertContact(name: String, phone: String) {
         if (name.isNotBlank() && phone.isNotBlank()) {
             val db = writableDatabase
@@ -46,7 +46,7 @@ class ContactDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         }
     }
 
-    // Lista contatos
+    // Lista contatos - GET
     fun getAllContacts(): List<Contact> {
         val contacts = mutableListOf<Contact>()
         val db = readableDatabase
@@ -77,7 +77,7 @@ class ContactDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         return contacts
     }
 
-    // Atualiza contatos
+    // Atualiza contatos - PUT
     fun updateContact(id: Int, newName: String, newPhone: String) {
         val db = this.writableDatabase
         val contentValues = ContentValues().apply {
@@ -88,7 +88,7 @@ class ContactDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABA
         db.close()
     }
 
-    // Remove o contato
+    // Remove o contato - DELETE
     fun deleteContact(contactId: Int) {
         val db = this.writableDatabase
         db.delete("contacts", "id = ?", arrayOf(contactId.toString()))
