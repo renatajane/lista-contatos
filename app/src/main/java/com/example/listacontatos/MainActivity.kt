@@ -9,8 +9,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,6 +25,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -28,6 +36,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.Visibility
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -120,31 +129,68 @@ fun SplashScreen(navController: NavHostController) {
     }
 }
 
-// Tela de opções
 @Composable
 fun ContactOptionsScreen(navController: NavHostController) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize(), // Preenche 100% da largura e altura
+        verticalArrangement = Arrangement.SpaceEvenly // Espaça os botões igualmente
     ) {
-        GreenButton(onClick = { navController.navigate("add_contact") }) {
-            Text("Adicionar Contato")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        GreenButton(onClick = { navController.navigate("view_contacts") }) {
-            Text("Visualizar Contatos")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        GreenButton(onClick = { navController.navigate("edit_contact") }) {
-            Text("Editar Contato")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        GreenButton(onClick = { navController.navigate("delete_contact") }) {
-            Text("Remover Contato")
+        // Botão para adicionar contato
+        OptionButton(
+            onClick = { navController.navigate("add_contact") },
+            text = "Adicionar Contato",
+            icon = Icons.Default.Add,
+            color = Color(0xFF4CAF50) // Cor verde para adicionar
+        )
+
+        // Botão para visualizar contatos
+        OptionButton(
+            onClick = { navController.navigate("view_contacts") },
+            text = "Visualizar Contatos",
+            icon = Icons.Default.List,
+            color = Color(0xFF81C784 ) // Cor azul para visualizar
+        )
+
+        // Botão para editar contato
+        OptionButton(
+            onClick = { navController.navigate("edit_contact") },
+            text = "Editar Contato",
+            icon = Icons.Default.Edit,
+            color = Color(0xFFA5D6A7 ) // Cor amarela para editar
+        )
+
+        // Botão para remover contato
+        OptionButton(
+            onClick = { navController.navigate("delete_contact") },
+            text = "Remover Contato",
+            icon = Icons.Default.Delete,
+            color = Color(0xFFC8E6C9 ) // Cor vermelha para remover
+        )
+    }
+}
+
+@Composable
+fun OptionButton(onClick: () -> Unit, text: String, icon: ImageVector, color: Color) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth() // Preenche toda a largura da tela
+            .height(200.dp) // Define uma altura fixa para o botão
+            .clickable(onClick = onClick) // Torna o Box clicável
+            .background(color) // Aplica a cor de fundo aqui
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp), // Adiciona preenchimento
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(icon, contentDescription = null)
+            Spacer(modifier = Modifier.width(8.dp)) // Espaço entre ícone e texto
+            Text(text)
         }
     }
 }
+
 
 // Função para formatar telefone
 fun formatPhoneNumber(input: String): String {
@@ -349,8 +395,8 @@ fun ViewContactsScreen(navController: NavHostController, dbHelper: ContactDataba
                     Spacer(modifier = Modifier.height(16.dp)) // Espaçamento entre a mensagem e o botão
 
                     // Botão "Adicionar Contato" centralizado
-                    BorderedGreenButton(onClick = { navController.navigate("addContact") }) {
-                        Text(text = "Adicionar Contato", color = Color(0xFF4CAF50))
+                                            GreenButton(onClick = { navController.navigate("add_contact") }) {
+                        Text(text = "Adicionar Contato", color = Color.White)
                     }
                 }
             } else {
@@ -368,18 +414,17 @@ fun ViewContactsScreen(navController: NavHostController, dbHelper: ContactDataba
                     Spacer(modifier = Modifier.height(8.dp)) // Espaçamento entre contatos
                 }
             }
-        }
+            // Botão "Voltar"
+            Spacer(modifier = Modifier.height(16.dp))
 
-        // Botão "Voltar"
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Botão "Voltar" centralizado
-        Box(
-            modifier = Modifier.fillMaxWidth(), // Ocupa toda a largura
-            contentAlignment = Alignment.Center // Centraliza o botão
-        ) {
-            BorderedGreenButton(onClick = { navController.navigate("contacts") }) {
-                Text(text = "Voltar", color = Color(0xFF4CAF50))
+            // Botão "Voltar" centralizado
+            Box(
+                modifier = Modifier.fillMaxWidth(), // Ocupa toda a largura
+                contentAlignment = Alignment.Center // Centraliza o botão
+            ) {
+                BorderedGreenButton(onClick = { navController.navigate("contacts") }) {
+                    Text(text = "Voltar", color = Color(0xFF4CAF50))
+                }
             }
         }
 
@@ -441,128 +486,147 @@ fun EditContactScreen(navController: NavHostController, dbHelper: ContactDatabas
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally // Alinha itens no centro horizontalmente
         ) {
-            Text(
-                text = "Selecione um contato para editar:",
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-            )
-
-            // Lista de contatos
-            for (contact in contacts) {
-                val isSelected = selectedContact == contact
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            selectedContact = contact
-                            nameState.value = contact.name
-                            phoneState.value = TextFieldValue(
-                                formatPhoneNumber(
-                                    contact.phone.replace(
-                                        Regex("[^\\d]"),
-                                        ""
-                                    )
-                                )
-                            )
-                        }
-                        .padding(8.dp)
-                        .background(if (isSelected) Color(0xFF81C784) else Color.Transparent) // Altera a cor de fundo se selecionado
+            if (contacts.isEmpty()) {
+                // Mensagem caso não haja contatos
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally, // Centraliza o conteúdo
+                    modifier = Modifier.fillMaxWidth() // Ocupa toda a largura
                 ) {
                     Text(
-                        text = contact.name,
+                        text = "Ainda não há contatos salvos.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Black // Altera a cor do texto se selecionado
+                        color = Color.Gray // Cor da mensagem
                     )
+                    Spacer(modifier = Modifier.height(16.dp)) // Espaçamento entre a mensagem e o botão
+
+                    // Botão "Adicionar Contato" centralizado
+                    GreenButton(onClick = { navController.navigate("add_contact") }) {
+                        Text(text = "Adicionar Contato", color = Color.White)
+                    }
                 }
-            }
+            } else {
+                // Apenas mostra a mensagem de selecionar contato se houver contatos
+                Text(
+                    text = "Selecione um contato para editar:",
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                )
 
-            // Campos para editar
-            Spacer(modifier = Modifier.height(16.dp))
-            if (selectedContact != null) {
-                // Usando um Box para centralizar
-                Box(modifier = Modifier.fillMaxWidth(0.8f)) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        // Campo de nome
-                        TextField(
-                            value = nameState.value,
-                            onValueChange = {
-                                nameState.value = it
-                                nameErrorMessage = "" // Limpa a mensagem de erro ao digitar
-                            },
-                            label = { Text("Nome") },
-                            singleLine = true,
-                            isError = nameErrorMessage.isNotEmpty(),
-                            modifier = Modifier.fillMaxWidth() // Preenche a largura do Box
-                        )
-                        if (nameErrorMessage.isNotEmpty()) {
-                            Text(text = nameErrorMessage, color = Color.Red)
-                        }
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        // Campo de telefone
-                        TextField(
-                            value = phoneState.value,
-                            onValueChange = { input ->
-                                // Remove todos os caracteres que não são dígitos
-                                val cleanedInput = input.text.replace(Regex("[^\\d]"), "")
-                                // Aplica a máscara
-                                val formattedPhone = formatPhoneNumber(cleanedInput)
-                                // Atualiza o estado e posiciona o cursor no final
+                // Lista de contatos
+                for (contact in contacts) {
+                    val isSelected = selectedContact == contact
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedContact = contact
+                                nameState.value = contact.name
                                 phoneState.value = TextFieldValue(
-                                    formattedPhone,
-                                    selection = TextRange(formattedPhone.length)
+                                    formatPhoneNumber(
+                                        contact.phone.replace(Regex("[^\\d]"), "")
+                                    )
                                 )
-                                phoneErrorMessage = "" // Limpa a mensagem de erro ao digitar
-                            },
-                            label = { Text("Telefone") },
-                            singleLine = true,
-                            isError = phoneErrorMessage.isNotEmpty(),
-                            modifier = Modifier.fillMaxWidth() // Preenche a largura do Box
+                            }
+                            .padding(8.dp)
+                            .background(if (isSelected) Color(0xFF81C784) else Color.Transparent) // Altera a cor de fundo se selecionado
+                    ) {
+                        Text(
+                            text = contact.name,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Black // Altera a cor do texto se selecionado
                         )
-                        if (phoneErrorMessage.isNotEmpty()) {
-                            Text(text = phoneErrorMessage, color = Color.Red)
-                        }
+                    }
+                }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // Botão de salvar alterações
-                        GreenButton(onClick = {
-                            // Validações
-                            val isNameValid =
-                                nameState.value.length in 3..15 && !nameState.value.any { it.isDigit() }
-                            val isPhoneValid =
-                                phoneState.value.text.matches(Regex("^\\(\\d{2}\\) \\d{5}-\\d{4}$"))
-
-                            if (!isNameValid) {
-                                nameErrorMessage =
-                                    "O nome deve ter entre 3 e 15 letras e não pode conter números."
-                            } else {
-                                nameErrorMessage = ""
+                // Campos para editar
+                Spacer(modifier = Modifier.height(16.dp))
+                if (selectedContact != null) {
+                    // Usando um Box para centralizar
+                    Box(modifier = Modifier.fillMaxWidth(0.8f)) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            // Campo de nome
+                            TextField(
+                                value = nameState.value,
+                                onValueChange = {
+                                    nameState.value = it
+                                    nameErrorMessage = "" // Limpa a mensagem de erro ao digitar
+                                },
+                                label = { Text("Nome") },
+                                singleLine = true,
+                                isError = nameErrorMessage.isNotEmpty(),
+                                modifier = Modifier.fillMaxWidth() // Preenche a largura do Box
+                            )
+                            if (nameErrorMessage.isNotEmpty()) {
+                                Text(text = nameErrorMessage, color = Color.Red)
                             }
 
-                            if (!isPhoneValid) {
-                                phoneErrorMessage = "O telefone deve conter apenas 11 números."
-                            } else {
-                                phoneErrorMessage = ""
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            // Campo de telefone
+                            TextField(
+                                value = phoneState.value,
+                                onValueChange = { input ->
+                                    // Remove todos os caracteres que não são dígitos
+                                    val cleanedInput = input.text.replace(Regex("[^\\d]"), "")
+                                    // Aplica a máscara
+                                    val formattedPhone = formatPhoneNumber(cleanedInput)
+                                    // Atualiza o estado e posiciona o cursor no final
+                                    phoneState.value = TextFieldValue(
+                                        formattedPhone,
+                                        selection = TextRange(formattedPhone.length)
+                                    )
+                                    phoneErrorMessage = "" // Limpa a mensagem de erro ao digitar
+                                },
+                                label = { Text("Telefone") },
+                                singleLine = true,
+                                isError = phoneErrorMessage.isNotEmpty(),
+                                modifier = Modifier.fillMaxWidth() // Preenche a largura do Box
+                            )
+                            if (phoneErrorMessage.isNotEmpty()) {
+                                Text(text = phoneErrorMessage, color = Color.Red)
                             }
 
-                            if (isNameValid && isPhoneValid) {
-                                // Atualiza o contato no banco de dados
-                                dbHelper.updateContact(
-                                    selectedContact!!.id,
-                                    nameState.value,
-                                    phoneState.value.text
-                                )
-                                showSuccessMessage = true // Exibe a mensagem de sucesso
-                            }
-                        }) {
-                            Text("Salvar Alterações")
-                        }
+                            Spacer(modifier = Modifier.height(16.dp))
 
-                        // Mensagem de sucesso centralizada abaixo do botão "Salvar Alterações"
-                        if (showSuccessMessage) {
-                            Spacer(modifier = Modifier.height(8.dp)) // Espaço entre o botão e a mensagem
-                            Text(text = "Contato editado com sucesso!", color = Color(0xFF006400))
+                            // Botão de salvar alterações
+                            GreenButton(onClick = {
+                                // Validações
+                                val isNameValid =
+                                    nameState.value.length in 3..15 && !nameState.value.any { it.isDigit() }
+                                val isPhoneValid =
+                                    phoneState.value.text.matches(Regex("^\\(\\d{2}\\) \\d{5}-\\d{4}$"))
+
+                                if (!isNameValid) {
+                                    nameErrorMessage =
+                                        "O nome deve ter entre 3 e 15 letras e não pode conter números."
+                                } else {
+                                    nameErrorMessage = ""
+                                }
+
+                                if (!isPhoneValid) {
+                                    phoneErrorMessage = "O telefone deve conter apenas 11 números."
+                                } else {
+                                    phoneErrorMessage = ""
+                                }
+
+                                if (isNameValid && isPhoneValid) {
+                                    // Atualiza o contato no banco de dados
+                                    dbHelper.updateContact(
+                                        selectedContact!!.id,
+                                        nameState.value,
+                                        phoneState.value.text
+                                    )
+                                    showSuccessMessage = true // Exibe a mensagem de sucesso
+                                }
+                            }) {
+                                Text("Salvar Alterações")
+                            }
+
+                            // Mensagem de sucesso centralizada abaixo do botão "Salvar Alterações"
+                            if (showSuccessMessage) {
+                                Spacer(modifier = Modifier.height(8.dp)) // Espaço entre o botão e a mensagem
+                                Text(text = "Contato editado com sucesso!", color = Color(0xFF006400))
+                            }
                         }
                     }
                 }
@@ -586,11 +650,11 @@ fun EditContactScreen(navController: NavHostController, dbHelper: ContactDatabas
                 .height(56.dp), // Altura do rodapé
             contentAlignment = Alignment.Center // Alinha o conteúdo no centro
         ) {
-            // Você pode adicionar um botão ou outra ação aqui, se necessário
         }
     }
 }
 
+//
 @Composable
 fun DeleteContactScreen(navController: NavHostController, dbHelper: ContactDatabaseHelper) {
     val contacts = dbHelper.getAllContacts()
@@ -625,52 +689,71 @@ fun DeleteContactScreen(navController: NavHostController, dbHelper: ContactDatab
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally // Centraliza horizontalmente todos os elementos
         ) {
-            Text(
-                text = "Selecione um contato para remover:",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Lista de contatos
-            for (contact in contacts) {
-                val isSelected = selectedContact == contact
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            selectedContact = contact
-                        }
-                        .padding(8.dp)
-                        .background(if (isSelected) Color(0xFFFFCDD2) else Color.Transparent) // Vermelho claro se selecionado
-                ) {
-                    Text(text = contact.name, style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (selectedContact != null) {
+            if (contacts.isEmpty()) {
+                // Mensagem caso não haja contatos
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally // Centraliza os elementos
+                    horizontalAlignment = Alignment.CenterHorizontally, // Centraliza o conteúdo
+                    modifier = Modifier.fillMaxWidth() // Ocupa toda a largura
                 ) {
                     Text(
-                        text = "Você tem certeza que deseja remover ${selectedContact!!.name}?",
+                        text = "Ainda não há contatos salvos.",
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Red // Define a cor do texto como vermelho
+                        color = Color.Gray // Cor da mensagem
                     )
-                                      Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(16.dp)) // Espaçamento entre a mensagem e o botão
 
-                    GreenButton(onClick = {
-                        // Remove o contato do banco de dados
-                        dbHelper.deleteContact(selectedContact!!.id)
-                        showSuccessMessage = true // Exibe a mensagem de sucesso
-                    }) {
-                        Text("Remover Contato")
+                    // Botão "Adicionar Contato" centralizado
+                    GreenButton(onClick = { navController.navigate("add_contact") }) {
+                        Text(text = "Adicionar Contato", color = Color.White)
                     }
                 }
             } else {
-                Text(text = "Selecione um contato para remover.", color = Color.Red)
+                Text(
+                    text = "Selecione um contato para remover:",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Lista de contatos
+                for (contact in contacts) {
+                    val isSelected = selectedContact == contact
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                selectedContact = contact
+                            }
+                            .padding(8.dp)
+                            .background(if (isSelected) Color(0xFFFFCDD2) else Color.Transparent) // Vermelho claro se selecionado
+                    ) {
+                        Text(text = contact.name, style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (selectedContact != null) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally // Centraliza os elementos
+                    ) {
+                        Text(
+                            text = "Você tem certeza que deseja remover ${selectedContact!!.name}?",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Red // Define a cor do texto como vermelho
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        GreenButton(onClick = {
+                            // Remove o contato do banco de dados
+                            dbHelper.deleteContact(selectedContact!!.id)
+                            showSuccessMessage = true // Exibe a mensagem de sucesso
+                        }) {
+                            Text("Remover Contato")
+                        }
+                    }
+                }
             }
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Botão "Voltar" centralizado
             Box(
@@ -682,9 +765,13 @@ fun DeleteContactScreen(navController: NavHostController, dbHelper: ContactDatab
                 }
             }
 
-            // Exibe a mensagem de sucesso abaixo do botão "Voltar"
+            // Exibe a mensagem de sucesso
             if (showSuccessMessage) {
-                Text(text = "Contato removido com sucesso!", color = Color(0xFF006400), modifier = Modifier.padding(top = 20.dp))
+                Text(
+                    text = "Contato removido com sucesso!",
+                    color = Color(0xFF006400),
+                    modifier = Modifier.padding(top = 20.dp)
+                )
             }
         }
 
@@ -702,7 +789,6 @@ fun DeleteContactScreen(navController: NavHostController, dbHelper: ContactDatab
         }
     }
 }
-
 
 
 @Preview(showBackground = true)
