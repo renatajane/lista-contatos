@@ -32,6 +32,6 @@ Para instalar e executar o aplicativo:
 4. Execute o aplicativo clicando no botão Run no Android Studio.
 
 ## Autores
-Jhennifer Wesllane
-Renata Jane 
-Sabrina Saad
+- Jhennifer Wesllane
+- Renata Jane 
+- Sabrina Saad
